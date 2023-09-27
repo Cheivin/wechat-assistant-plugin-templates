@@ -101,15 +101,29 @@ func makeRequestHandler() func(http.ResponseWriter, *http.Request) {
 		}
 		req.WithContext(r.Context())
 
+		if req.Method == http.MethodGet {
+			response := function.Info()
+			if jsonBytes, err := json.Marshal(response); err != nil {
+				log.Printf("Marshal json error %s, raw:%+v", err.Error(), response)
+				w.WriteHeader(http.StatusInternalServerError)
+				_, _ = w.Write([]byte(err.Error()))
+			} else {
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write(jsonBytes)
+			}
+			return
+		}
+
 		var request function.Request
 		if err := json.Unmarshal(req.Body, &request); err != nil {
-			log.Print(err)
+			log.Printf("Unmarshal json error %s, raw:%s", err.Error(), string(req.Body))
 			w.WriteHeader(http.StatusInternalServerError)
 			_, _ = w.Write([]byte{})
 		} else {
 			request.Request = &req
 			response := function.Handle(request)
 			if jsonBytes, err := json.Marshal(response); err != nil {
+				log.Printf("Marshal json error %s, raw:%+v", err.Error(), response)
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = w.Write([]byte(err.Error()))
 			} else {

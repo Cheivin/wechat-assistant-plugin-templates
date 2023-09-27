@@ -1,50 +1,44 @@
-# OpenFaaS Classic templates
+# Wechat Assistant Plugin templates
 
-[![Build Status](https://github.com/openfaas/templates/workflows/ci-only/badge.svg?branch=master)](https://github.com/openfaas/templates/actions)
+Wechat Assistant 支持通过 [OpenFaaS](https://www.openfaas.com) 完成远程插件功能的实现。
 
-To find out more about the OpenFaaS templates see the [faas-cli](https://github.com/openfaas/faas-cli).
+本项目提供基于OpenFaaS模版改造的各类语言插件模版，同样使用 [faas-cli](https://github.com/openfaas/faas-cli) 进行操作.
 
-> Note: The templates are completely customizable - so if you want to alter them please do fork them and use `faas template pull` to make use of your updated versions.
+### 模版列表
 
-### Classic Templates
+目前支持的模版如下.关于模版的更多使用方法请参阅[doc](https://docs.openfaas.com/cli/templates/)
 
-This repository contains the Classic OpenFaaS templates, but many more are available in the Template Store. Read above for more information.
+| Name      | Language | Version | Linux base   | Link    
+|:----------|:---------|:--------|:-------------|:--------
+| go-plugin | Go       | 1.20    | Alpine Linux | classic | [Go template](./template/go-plugin)
 
-| Name | Language | Version | Linux base | Watchdog | Link
-|:-----|:---------|:--------|:-----------|:---------|:----
-| dockerfile | Dockerfile | N/A | Alpine Linux | classic | [Dockerfile template](https://github.com/openfaas/templates/tree/master/template/dockerfile)
-| go | Go | 1.20 | Alpine Linux | classic | [Go template](https://github.com/openfaas/templates/tree/master/template/go)
-| node14 | NodeJS | 14 | Alpine Linux | of-watchdog | [NodeJS template](https://github.com/openfaas/templates/tree/master/template/node14)
-| node16 | NodeJS | 16 | Alpine Linux | of-watchdog | [NodeJS template](https://github.com/openfaas/templates/tree/master/template/node16)
-| node17 | NodeJS | 17 | Alpine Linux | of-watchdog | [NodeJS template](https://github.com/openfaas/templates/tree/master/template/node17)
-| node18 | NodeJS | 18 | Alpine Linux | of-watchdog | [NodeJS template](https://github.com/openfaas/templates/tree/master/template/node18)
-| node | NodeJS | 12 | Alpine Linux | classic | [NodeJS template](https://github.com/openfaas/templates/tree/master/template/node)
-| python3 | Python | 3 | Alpine Linux | classic | [Python 3 template](https://github.com/openfaas/templates/tree/master/template/python3)
-| python3-debian | Python | 3 | Debian Linux | classic | [Python 3 Debian template](https://github.com/openfaas/templates/tree/master/template/python3-debian)
-| python | Python | 2.7 | Alpine Linux | classic | [Python 2.7 template](https://github.com/openfaas/templates/tree/master/template/python)
-| java11-vert-x | Java and [Vert.x](https://vertx.io/) | 11 | Debian GNU/Linux | of-watchdog | [Java LTS template](https://github.com/openfaas/templates/tree/master/template/java11-vert-x)
-| java11 | Java | 11 | Debian GNU/Linux | of-watchdog | [Java LTS template](https://github.com/openfaas/templates/tree/master/template/java11)
-| ruby | Ruby | 2.7 | Alpine Linux 3.11 | classic| [Ruby template](https://github.com/openfaas/templates/tree/master/template/ruby)
-| php7 | PHP | 7.4 | Alpine Linux | classic | [PHP 7 template](https://github.com/openfaas/templates/tree/master/template/php7)
-| php8 | PHP | 8.1 | Alpine Linux | classic | [PHP 8 template](https://github.com/openfaas/templates/tree/master/template/php8)
-| csharp | C# | N/A | Debian GNU/Linux 9 | classic | [C# template](https://github.com/openfaas/templates/tree/master/template/csharp)
+### 使用
 
-For more information on the templates check out the [docs](https://docs.openfaas.com/cli/templates/).
+***请先确保已安装 [faas-cli](https://github.com/openfaas/faas-cli)***
 
-### Classic vs of-watchdog templates
+一键脚本：`curl -sSL https://cli.openfaas.com | sudo -E sh`
 
-The current version of OpenFaaS templates use the original `watchdog` which `forks` processes - a bit like CGI. The newer watchdog [of-watchdog](https://github.com/openfaas-incubator/of-watchdog) is more similar to fastCGI/HTTP and should be used for any benchmarking or performance testing along with one of the newer templates. Contact the project for more information.
+HomeBrew: `brew install faas-cli`
 
-### Submit your own template to the template store
+文档：https://docs.openfaas.com/cli/install/
 
-This repository is for templates supported by the project maintainers, if you'd like to submit your own template to the OpenFaaS Template Store then checkout the store:
+- 拉取模版: `faas template pull https://github.com/Cheivin/wechat-assistant-plugin-templates `
 
-* [OpenFaaS Store](https://github.com/openfaas/store/)
+- 创建Function: `faas template pull https://github.com/Cheivin/wechat-assistant-plugin-templates`
 
-### Contribute to this repository
+#### 创建 go-plugin 项目
 
-See [contributing guide](https://github.com/openfaas/templates/blob/master/CONTRIBUTING.md).
+在`template`同级目录执行命令：`faas new --lang go-plugin Function名称`
 
-### License
+例如：`faas new --lang go-plugin go-echo`，此时会自动生成`go-echo`目录和`go-echo.yml`文件
 
-This project is part of the OpenFaaS project licensed under the MIT License.
+进入`go-echo`目录，在`handler.go`的`Handler`方法中编写业务逻辑。
+
+#### 构建项目
+
+在`go-echo.yml`文件同级目录，执行`faas build -f go-echo.yml`可以启动项目构建，生成镜像
+
+构建完成后执行`faas push -f go-echo.yml`,将镜像推送至docker仓库或私有仓库
+
+
+
