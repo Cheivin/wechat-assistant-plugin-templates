@@ -8,9 +8,10 @@ Wechat Assistant 支持通过 [OpenFaaS](https://www.openfaas.com) 完成远程�
 
 目前支持的模版如下.关于模版的更多使用方法请参阅[doc](https://docs.openfaas.com/cli/templates/)
 
-| Name      | Language | Version | Linux base   | Link    
-|:----------|:---------|:--------|:-------------|:--------
-| go-plugin | Go       | 1.20    | Alpine Linux | classic | [Go template](./template/go-plugin)
+| Name        | Language | Version | Linux base   | Link    
+|:------------|:---------|:--------|:-------------|:--------
+| go-plugin   | Go       | 1.20    | Alpine Linux | [Go template](./template/go-plugin)
+| node-plugin | Node     | 18      | Alpine Linux |  [Node template](./template/node-plugin)
 
 ### 使用
 
