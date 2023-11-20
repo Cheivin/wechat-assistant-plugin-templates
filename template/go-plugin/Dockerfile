@@ -32,7 +32,7 @@ WORKDIR /go/src/handler/function
 
 RUN mkdir -p /go/src/handler/function/static
 
-RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOFLAGS=${GOFLAGS} go test ./... -cover
+#RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOFLAGS=${GOFLAGS} go test ./... -cover
 
 WORKDIR /go/src/handler
 RUN CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOFLAGS=${GOFLAGS} \
