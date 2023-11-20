@@ -1,5 +1,5 @@
-FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/openfaas/of-watchdog:0.9.11 as watchdog
-FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.20-alpine as build
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/openfaas/of-watchdog:0.9.13 as watchdog
+FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.21-alpine as build
 
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -26,21 +26,18 @@ ENV GOPROXY=${GOPROXY:-"https://goproxy.cn,https://goproxy.io,direct"}
 # Run a gofmt and exclude all vendored code.
 RUN test -z "$(gofmt -l $(find . -type f -name '*.go' -not -path "./vendor/*" -not -path "./function/vendor/*"))" || { echo "Run \"gofmt -s -w\" on your Golang code"; exit 1; }
 
-RUN sh ./modules-cleanup.sh
-
 WORKDIR /go/src/handler/function
-
 RUN mkdir -p /go/src/handler/function/static
 
-#RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOFLAGS=${GOFLAGS} go test ./... -cover
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} go test ./... -cover
 
 WORKDIR /go/src/handler
-RUN CGO_ENABLED=${CGO_ENABLED} GOOS=${TARGETOS} GOARCH=${TARGETARCH} GOFLAGS=${GOFLAGS} \
+RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
     go build --ldflags "-s -w" -o handler .
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine:3.18.2 as ship
-# Add non root user and certs
+FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine:3.18.4 as ship
 
+# Add non root user and certs
 RUN apk --no-cache add ca-certificates \
     && addgroup -S app && adduser -S -g app app
 
