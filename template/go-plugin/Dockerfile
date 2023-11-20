@@ -37,8 +37,10 @@ RUN GOOS=${TARGETOS} GOARCH=${TARGETARCH} \
 
 FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine:3.18.4 as ship
 
+ENV TZ=Asia/Shanghai
 # Add non root user and certs
-RUN apk --no-cache add ca-certificates \
+RUN apk --no-cache add ca-certificates tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo '$TZ' >  /etc/timezone \
     && addgroup -S app && adduser -S -g app app
 
 # Split instructions so that buildkit can run & cache
