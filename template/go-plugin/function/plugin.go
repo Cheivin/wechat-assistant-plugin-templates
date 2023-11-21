@@ -40,3 +40,8 @@ const (
 	Video
 	File
 )
+
+func (r Response) JSON() (bytes []byte) {
+	bytes, _ = json.Marshal(r)
+	return bytes
+}

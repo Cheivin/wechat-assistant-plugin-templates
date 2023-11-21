@@ -105,8 +105,8 @@ func makeRequestHandler() func(http.ResponseWriter, *http.Request) {
 			response := function.Info()
 			if jsonBytes, err := json.Marshal(response); err != nil {
 				log.Printf("Marshal json error %s, raw:%+v", err.Error(), response)
-				w.WriteHeader(http.StatusInternalServerError)
-				_, _ = w.Write([]byte(err.Error()))
+				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write(function.Response{Error: err.Error()}.JSON())
 			} else {
 				w.WriteHeader(http.StatusOK)
 				_, _ = w.Write(jsonBytes)
@@ -117,19 +117,13 @@ func makeRequestHandler() func(http.ResponseWriter, *http.Request) {
 		var request function.Request
 		if err := json.Unmarshal(req.Body, &request); err != nil {
 			log.Printf("Unmarshal json error %s, raw:%s", err.Error(), string(req.Body))
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte{})
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(function.Response{Error: err.Error()}.JSON())
 		} else {
 			request.Request = &req
 			response := function.Handle(request)
-			if jsonBytes, err := json.Marshal(response); err != nil {
-				log.Printf("Marshal json error %s, raw:%+v", err.Error(), response)
-				w.WriteHeader(http.StatusInternalServerError)
-				_, _ = w.Write([]byte(err.Error()))
-			} else {
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write(jsonBytes)
-			}
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write(response.JSON())
 		}
 	}
 }
