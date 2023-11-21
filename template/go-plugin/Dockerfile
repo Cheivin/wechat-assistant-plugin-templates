@@ -1,4 +1,4 @@
-FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/openfaas/of-watchdog:0.9.13 as watchdog
+FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.dockerproxy.com/openfaas/of-watchdog:0.9.13 as watchdog
 FROM --platform=${BUILDPLATFORM:-linux/amd64} golang:1.21-alpine as build
 
 ARG TARGETPLATFORM
@@ -6,6 +6,7 @@ ARG BUILDPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
 
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk --no-cache add git
 
 COPY --from=watchdog /fwatchdog /usr/bin/fwatchdog
@@ -39,6 +40,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} alpine:3.18.4 as ship
 
 ENV TZ=Asia/Shanghai
 # Add non root user and certs
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk --no-cache add ca-certificates tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo '$TZ' >  /etc/timezone \
     && addgroup -S app && adduser -S -g app app
